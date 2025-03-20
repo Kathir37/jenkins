@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "Kathir37"
         REGISTRY = "docker.io"
         DOCKER_CREDENTIALS_ID = "Docker"
-        GITHUB_CREDENTIALS_ID = "Git"
+        GITHUB_CREDENTIALS_ID = "github"
     }
 
     stages {
