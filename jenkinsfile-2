@@ -31,15 +31,15 @@ pipeline {
             }
         }
 
-        stage('Login to Docker Registry') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin ${env.REGISTRY}'
-                    }
-                }
+       stage('Login to Docker Registry') {
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: 'my-docker-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh 'echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin ${REGISTRY}'
             }
         }
+    }
+}
 
         stage('Push Image to Docker Registry') {
             steps {
