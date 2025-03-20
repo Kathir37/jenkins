@@ -12,8 +12,7 @@ pipeline {
         stage('Set Environment Variables') {
             steps {
                 script {
-                    env.APP_DIR = env.WORKSPACE  // Correct way to set APP_DIR
-                    echo "APP_DIR is set to: ${env.APP_DIR}"
+                    echo "Workspace Directory: ${env.WORKSPACE}"
                 }
             }
         }
@@ -27,7 +26,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "cd ${env.APP_DIR} && docker build -t ${env.IMAGE_NAME}:latest ."
+                    sh "cd \"${env.WORKSPACE}\" && docker build -t ${env.IMAGE_NAME}:latest ."
                 }
             }
         }
@@ -54,8 +53,8 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        set -e  # Stop execution if any command fails
-                        cd ${APP_DIR}
+                        set -e
+                        cd "${WORKSPACE}"
                         docker-compose down
                         docker-compose up -d
                     '''
