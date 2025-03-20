@@ -2,49 +2,42 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "Kathir37"
+        IMAGE_NAME = "kathirmurugesan"
         REGISTRY = "docker.io"
         DOCKER_CREDENTIALS_ID = "Docker"
         GITHUB_CREDENTIALS_ID = "github"
+
     }
 
     stages {
-        stage('Set Environment Variables') {
-            steps {
-                script {
-                    echo "Workspace Directory: ${env.WORKSPACE}"
-                }
-            }
-        }
-
         stage('Checkout Code') {
             steps {
-                git credentialsId: env.GITHUB_CREDENTIALS_ID, url: 'https://github.com/Kathir37/jenkins.git', branch: 'main'
+                git credentialsId: GITHUB_CREDENTIALS_ID, url: 'https://github.com/Kathir37/jenkins.git', branch: 'main'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "cd \"${env.WORKSPACE}\" &&docker build -t kathir37:latest ."
+                    sh "docker build -t $IMAGE_NAME:latest ."
                 }
             }
         }
 
-       stage('Login to Docker Registry') {
-    steps {
-        script {
-            withCredentials([usernamePassword(credentialsId: 'Docker', usernameVariable: 'kathirmurugesan', passwordVariable: 'Kathir_37')]) {
-                sh 'echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin ${REGISTRY}'
+        stage('Login to Docker Registry') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Push Image to Docker Registry') {
             steps {
                 script {
-                    sh "docker push ${env.IMAGE_NAME}:latest"
+                    sh "docker push $IMAGE_NAME:latest"
                 }
             }
         }
@@ -52,12 +45,7 @@ pipeline {
         stage('Deploy using Docker Compose') {
             steps {
                 script {
-                    sh '''
-                        set -e
-                        cd "${WORKSPACE}"
-                        docker-compose down
-                        docker-compose up -d
-                    '''
+                    sh "docker-compose up -d"
                 }
             }
         }
@@ -65,7 +53,7 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Pipeline executed successfully! '
         }
         failure {
             echo 'Pipeline failed! Check the logs for errors.'
