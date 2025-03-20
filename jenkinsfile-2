@@ -6,6 +6,7 @@ pipeline {
         REGISTRY = "docker.io"
         DOCKER_CREDENTIALS_ID = "Docker"
         GITHUB_CREDENTIALS_ID = "Git"
+        APP_DIR = ${WORKSPACE}
     }
 
     stages {
